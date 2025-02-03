@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Tracker (₹)</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1d2b64, #8a9aa5);
+            background-size: cover;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 30px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            color: #007bff;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        h2 {
+            color: #444;
+            border-bottom: 3px solid #007bff;
+            display: block;
+            padding-bottom: 5px;
+            text-align: center;
+        }
+        input {
+            width: 90%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            outline: none;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px auto;
+            display: block;
+            transition: all 0.3s ease-in-out;
+        }
+        button:hover {
+            background: #0056b3;
+            transform: scale(1.05);
+        }
+        .budget-card {
+            background: #007bff;
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin: 15px auto;
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+        }
+        .expense-item {
+            background: #f8f8f8;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 5px 0;
+            display: flex;
+            justify-content: space-between;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Budget Tracker (₹)</h1>
+        <h2>Set Budget</h2>
+        <input type="number" id="budgetInput" placeholder="Enter your budget in ₹">
+        <button onclick="setBudget()">Set Budget</button>
+        <h2>Add Expenses</h2>
+        <div id="expenseContainer">
+            <div>
+                <input type="text" class="expenseDesc" placeholder="Expense description">
+                <input type="number" class="expenseAmount" placeholder="Amount (₹)">
+            </div>
+        </div>
+        <button onclick="addExpenseField()">+ Add More</button>
+        <button onclick="addExpenses()">Submit Expenses</button>
+        <h2>Budget Summary</h2>
+        <div class="budget-card">
+            <p><strong>Total Budget:</strong> ₹<span id="totalBudget">0</span></p>
+            <p><strong>Total Spent:</strong> ₹<span id="totalSpent">0</span></p>
+            <p><strong>Remaining Budget:</strong> ₹<span id="remainingBudget">0</span></p>
+        </div>
+        <h2>Expenses List</h2>
+        <div id="expenseList"></div>
+    </div>
+    <script>
+        function setBudget() {
+            let budget = $("#budgetInput").val();
+            if (budget <= 0) {
+                alert("Please enter a valid budget amount.");
+                return;
+            }
+            alert("Budget set to ₹" + budget);
+            $("#totalBudget").text(budget);
+            $("#remainingBudget").text(budget);
+        }
+        function addExpenseField() {
+            $("#expenseContainer").append(`
+                <div>
+                    <input type="text" class="expenseDesc" placeholder="Expense description">
+                    <input type="number" class="expenseAmount" placeholder="Amount (₹)">
+                </div>
+            `);
+        }
+        function addExpenses() {
+            let totalSpent = parseInt($("#totalSpent").text());
+            let totalBudget = parseInt($("#totalBudget").text());
+            let expenses = [];
+            $(".expenseDesc").each(function(index) {
+                let description = $(this).val();
+                let amount = parseInt($(".expenseAmount").eq(index).val());
+                if (description && amount > 0) {
+                    expenses.push({ description: description, amount: amount });
+                    totalSpent += amount;
+                }
+            });
+            if (expenses.length === 0) {
+                alert("Please enter at least one valid expense.");
+                return;
+            }
+            $("#totalSpent").text(totalSpent);
+            $("#remainingBudget").text(totalBudget - totalSpent);
+            let expensesHtml = "";
+            expenses.forEach(expense => {
+                expensesHtml += `
+                    <div class='expense-item'>
+                        <span>${expense.description}</span>
+                        <span>₹${expense.amount}</span>
+                    </div>
+                `;
+            });
+            $("#expenseList").append(expensesHtml);
+        }
+    </script>
+</body>
+</html>
